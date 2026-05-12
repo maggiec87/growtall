@@ -204,12 +204,7 @@ body{
 /* ── TIPS CAROUSEL ── */
 .tip-card{background:linear-gradient(135deg,var(--blue-l),#eef5ff);border:1px solid #C5D9F0;border-radius:var(--rsm);padding:12px;font-size:13px;color:var(--t2);line-height:1.7;position:relative}
 .tip-lbl{font-size:10px;font-weight:700;color:var(--blue-m);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.tip-nav{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
-.tip-dots{display:flex;gap:4px}
-.tip-dot{width:6px;height:6px;border-radius:50%;background:var(--t4);transition:background .2s}
-.tip-dot.on{background:var(--blue)}
-.tip-btn{background:none;border:none;cursor:pointer;font-size:18px;color:var(--t3);padding:2px 6px;border-radius:6px}
-.tip-btn:hover{color:var(--blue)}
+
 
 /* ── FORM ── */
 .hform{display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
@@ -444,16 +439,11 @@ body{
     </div>
 
     <div class="card">
-      <div class="card-hd"><div class="card-title"><div class="card-ic" style="background:#FEF3E6">💡</div>科学贴士</div></div>
-      <div class="tip-lbl">每日一学</div>
-      <div id="daily-tip" class="tip-card"></div>
-      <div class="tip-nav">
-        <div class="tip-dots" id="tip-dots"></div>
-        <div style="display:flex;gap:4px">
-          <button class="tip-btn" onclick="tipNav(-1)">‹</button>
-          <button class="tip-btn" onclick="tipNav(1)">›</button>
-        </div>
+      <div class="card-hd">
+        <div class="card-title"><div class="card-ic" style="background:#FEF3E6">💡</div>今日科学贴士</div>
+        <span id="tip-counter" style="font-size:11px;color:var(--t3);flex-shrink:0"></span>
       </div>
+      <div id="daily-tip" class="tip-card"></div>
     </div>
 
     <div class="card" id="home-stage-card" style="display:none">
@@ -520,7 +510,10 @@ body{
       <div class="pbar-lb" id="ck-pb-lb">今日完成 0 项</div>
     </div>
     <div id="check-container"></div>
-    <button class="add-task-btn" onclick="openAddTaskModal()">＋ 添加自定义打卡项目</button>
+    <div style="display:flex;gap:8px;margin-bottom:6px">
+      <button class="add-task-btn" onclick="openAddTaskModal()" style="flex:1;margin-bottom:0">＋ 添加打卡项目</button>
+      <button onclick="resetDefaultTasks()" style="flex-shrink:0;padding:10px 12px;background:var(--s2);border:1.5px dashed var(--border);border-radius:var(--rsm);font-size:12px;color:var(--t3);cursor:pointer;font-family:'Noto Sans SC',sans-serif;white-space:nowrap">↺ 恢复默认</button>
+    </div>
     <div class="card" style="margin-top:3px">
       <div class="card-hd"><div class="card-title"><div class="card-ic" style="background:#E8F1FB">📅</div>打卡日历</div></div>
       <div class="cal-nav">
@@ -841,24 +834,62 @@ function getAgeGroup(ageYears){
 }
 
 // ═══════════════════════════════════════════════════════════
-// TIPS DATA
+// TIPS DATA — 50条科学贴士，每天按日期固定显示一条
 // ═══════════════════════════════════════════════════════════
 const TIPS=[
-  {title:'生长激素的秘密',text:'生长激素在深度睡眠时分泌最旺盛，晚上22:00–2:00是黄金分泌期。确保孩子在22点前进入熟睡状态，是增高最重要的一步。'},
-  {title:'钙 + 维D 黄金搭档',text:'钙是骨骼的主要成分，每天喝2-3杯牛奶就能满足大部分钙质需求。维生素D帮助钙被人体吸收利用，两者缺一不可——有钙没有维D就像有钱没有银行。'},
-  {title:'跳绳：最简单的增高运动',text:'跳绳每次15分钟，对长骨产生纵向机械刺激，效果媲美打篮球。随时随地可以做，每分钟100次以上效果最佳。建议饭后1小时进行。'},
-  {title:'单杠悬挂的科学',text:'悬挂单杠能利用自身体重拉伸脊柱椎间盘，改善因久坐造成的压缩。每天3组，每组20-30秒，长期坚持有助于改善体态和身高表现。'},
-  {title:'蛋白质的最佳摄入方式',text:'蛋白质是骨骼和肌肉的建筑材料。优质蛋白质来源包括：鸡蛋、鱼肉、瘦肉、豆腐、豆浆。每餐摄入20-30克，比一次性大量摄入效果更好。'},
-  {title:'屏幕蓝光与睡眠的关系',text:'手机和平板发出的蓝光会抑制大脑分泌褪黑素，导致入睡困难、睡眠变浅。睡前1小时放下屏幕，可以用阅读纸质书替代，改善睡眠质量。'},
-  {title:'体态对身高的影响',text:'圆肩驼背、头前倾不仅看起来矮，长期还会影响脊柱发育。每天做"5-5-5"体态训练：5个猫牛式、5个胸部伸展、5秒靠墙站立。'},
-  {title:'水分与骨骼健康',text:'软骨组织70-80%由水分构成。脱水会降低软骨的减震能力和营养输送效率。每天保证1500-2000ml饮水，运动后及时补充。'},
-  {title:'深海鱼的双重功效',text:'三文鱼、沙丁鱼等深海鱼富含Omega-3脂肪酸和维生素D。Omega-3减少骨骼炎症，维D促进钙吸收。每周吃2-3次，比吃保健品更天然。'},
-  {title:'情绪与生长的关系',text:'长期压力大会让身体持续分泌皮质醇，这种压力激素会抑制生长激素的分泌。适当运动、充足睡眠、良好亲子关系都是减少压力的重要方法。'},
-  {title:'微量元素锌的作用',text:'锌直接参与生长激素的合成和分泌。富含锌的食物有：牡蛎、牛肉、南瓜籽、腰果、黑芝麻。挑食或素食的孩子更容易缺锌。'},
-  {title:'篮球：全方位增高运动',text:'篮球集合了跑跳、争抢、急停等动作，持续给骨骼纵向刺激，同时促进生长激素大量分泌。研究发现，篮球运动员平均身高高于同龄人4-6cm。'},
-  {title:'睡姿与脊柱健康',text:'仰卧是最理想的睡姿，脊柱保持自然弯曲。枕头高度约8-10cm（一个拳头高），避免过高过低。侧睡时在膝盖间夹枕头，避免长期趴睡。'},
-  {title:'早餐对生长的重要性',text:'经过一夜睡眠，身体处于空腹状态。不吃早餐会导致血糖低、注意力下降，还会迫使身体分解肌肉蛋白质供能。早餐应包含蛋白质、全谷物和水果。'},
-  {title:'阳光与维生素D',text:'皮肤在阳光（UVB）照射下能自然合成维生素D。每天上午或下午（避开正午）户外活动20-30分钟，手臂和脸部适量暴露，是最经济的补D方式。'},
+  {title:'生长激素的黄金窗口',text:'生长激素在深度睡眠时分泌最旺盛，晚上22:00–2:00是黄金分泌期。确保孩子在22点前进入熟睡状态，这是促进长高最重要的一步，比任何补品都有效。'},
+  {title:'钙 + 维D 黄金搭档',text:'钙是骨骼的主要成分，每天喝2-3杯牛奶就能满足大部分钙质需求。维生素D帮助钙被人体吸收利用，两者缺一不可——有钙没有维D就像有钱存不进银行。'},
+  {title:'跳绳：最简单的增高运动',text:'跳绳每次15分钟，对长骨产生纵向机械刺激，效果媲美打篮球。随时随地可以做，每分钟100次以上效果最佳，建议饭后1小时进行，长期坚持效果显著。'},
+  {title:'单杠悬挂的科学原理',text:'悬挂单杠能利用自身体重拉伸脊柱椎间盘，改善因久坐造成的椎间盘压缩。每天3组，每组20-30秒，长期坚持有助于改善体态，让身高表现更充分。'},
+  {title:'蛋白质分餐摄入更有效',text:'蛋白质是骨骼和肌肉的建筑材料。每餐摄入20-30克优质蛋白（鸡蛋、鱼肉、瘦肉、豆腐）比一次大量摄入效果更好，因为人体每餐只能高效利用有限量的蛋白质。'},
+  {title:'屏幕蓝光偷走睡眠质量',text:'手机和平板发出的蓝光会抑制大脑分泌褪黑素，导致入睡困难、睡眠变浅。睡前1小时放下屏幕，换成阅读纸质书，睡眠质量会明显改善，生长激素分泌也更充足。'},
+  {title:'体态决定你看起来有多高',text:'圆肩驼背、头前倾不仅外观看起来矮3-5cm，长期还会影响脊柱正常发育。每天做"墙角伸展"：背靠门框，双手推墙，挺胸5秒，坚持10次，效果立竿见影。'},
+  {title:'水分与骨骼健康的关系',text:'软骨组织70-80%由水分构成。脱水会降低软骨的减震能力和营养输送效率，影响骨骼正常生长。每天保证1500-2000ml饮水，运动后尽快补充，不要等口渴才喝。'},
+  {title:'深海鱼：骨骼的天然补品',text:'三文鱼、沙丁鱼等深海鱼富含Omega-3脂肪酸和维生素D。Omega-3减少骨骼慢性炎症，维D促进钙的吸收和沉积。每周吃2-3次，比单独补充保健品更天然有效。'},
+  {title:'情绪压力会抑制生长',text:'长期精神压力大会让身体持续分泌皮质醇。这种"压力激素"会直接抑制生长激素的分泌，并干扰钙的吸收。适当运动、充足睡眠、良好亲子沟通是最好的减压良方。'},
+  {title:'微量元素锌与生长激素',text:'锌直接参与生长激素的合成和分泌过程。缺锌会导致生长迟缓、食欲下降。富含锌的食物有：牡蛎（锌含量最高）、牛肉、南瓜籽、腰果、黑芝麻。挑食的孩子要特别注意。'},
+  {title:'篮球：增高的全能运动',text:'篮球融合了跑、跳、转体等多维度动作，持续给骨骼纵向刺激，同时大量促进生长激素分泌。每周打3次篮球，每次40分钟以上，坚持一年效果相当显著。'},
+  {title:'仰卧睡姿最有利于脊柱',text:'仰卧是最理想的睡姿，脊柱保持自然生理弯曲，有利于椎间盘夜间恢复高度。枕头高度约8-10cm（一个拳头高），过高过低都会造成颈椎疲劳，影响睡眠质量。'},
+  {title:'不吃早餐影响一整天的生长',text:'经过一夜空腹，身体急需营养补充。不吃早餐会导致血糖过低、注意力下降，更会迫使身体分解肌肉蛋白质供能。理想早餐应包含蛋白质、全谷物和新鲜水果三要素。'},
+  {title:'阳光是最天然的维D来源',text:'皮肤在阳光（UVB）照射下能自然合成维生素D，效率远超口服补充剂。每天上午10点前或下午4点后，户外活动20-30分钟，让手臂和面部适量暴露，经济又高效。'},
+  {title:'全谷物比精米白面更有利于生长',text:'全谷物（糙米、燕麦、全麦面包）含有丰富的B族维生素、矿物质和膳食纤维，能稳定血糖，为骨骼和肌肉生长提供持续能量。精制碳水则会引起血糖波动，影响生长激素分泌节律。'},
+  {title:'游泳：对骨骼最友好的增高运动',text:'游泳能充分拉伸脊柱和四肢，同时全身肌肉协同用力，几乎没有关节冲击。研究发现，坚持游泳的青少年脊柱更健康，体态更好，身高表现也更充分。建议每周游泳2-3次。'},
+  {title:'铁元素：容易被忽视的生长营养素',text:'铁参与血红蛋白合成，负责将氧气和营养输送到骨骼生长板。缺铁会导致贫血、疲劳，间接影响生长。深色蔬菜、红肉、豆类都含铁，配合维生素C食物吸收效果更好。'},
+  {title:'久坐是长高的隐形杀手',text:'长时间坐着会压缩腰椎椎间盘，使椎间盘内压力增大，阻碍营养液的循环。上午和下午各做一次"脊柱减压"练习：趴下，双手撑地，慢慢抬起上身，保持5秒，重复10次。'},
+  {title:'镁元素帮助钙沉积到骨骼',text:'镁是骨骼矿化的重要辅助因子，帮助钙从血液沉积到骨骼中。同时镁还能改善睡眠深度，间接促进生长激素分泌。富含镁的食物：坚果、深绿蔬菜、黑豆、南瓜籽、全麦食品。'},
+  {title:'骨龄与实际年龄可以不一样',text:'骨龄是通过手腕X光判断骨骼成熟程度的指标，可能超前或落后于实际年龄。骨龄落后的孩子往往有更长的生长窗口期；骨龄超前则需要关注是否有性早熟迹象。建议每年做一次骨龄检测。'},
+  {title:'有氧运动促进生长激素分泌',text:'中高强度有氧运动（心率达到最大心率60-80%）能刺激生长激素分泌，分泌量是静息状态的3-5倍。跑步、游泳、骑车、球类运动都符合要求，每次持续30分钟以上效果最好。'},
+  {title:'豆腐和豆浆是钙的优质来源',text:'北豆腐每100g含钙约138mg，豆浆每杯含钙约25mg。对于不喜欢喝牛奶的孩子，豆腐、豆浆、腐竹都是很好的替代选择，同时还能提供优质植物蛋白。'},
+  {title:'睡眠不足对体重的影响',text:'睡眠不足会导致饥饿素增加、瘦素减少，让孩子更容易感到饥饿并偏爱高热量食物。而过重的体重反过来会压迫骨骼，干扰正常的生长发育节律。充足睡眠是维持健康体重的基础。'},
+  {title:'为什么早晨身高比晚上高？',text:'人在夜间平躺时，脊柱椎间盘可以充分吸水膨胀，恢复高度。所以早晨起床时身高比晚上睡前高约1-2cm。这说明脊柱健康和充足睡眠对身高表现非常重要，要保护好椎间盘健康。'},
+  {title:'维生素K2引导钙去对的地方',text:'维生素K2（MK-7型）能激活骨钙素，将钙精准引导沉积到骨骼而非血管中。纳豆是维K2含量最高的食物，其次是奶酪、蛋黄、草饲黄油。与维D3配合使用，骨骼补钙效率更高。'},
+  {title:'青春期生长激素分泌规律',text:'青春期性激素（雌激素/睾酮）会协同放大生长激素的作用，这是青春期突然快速长高的原因。这个阶段保证22:00前入睡、高蛋白饮食和纵向运动，可以将遗传身高潜力发挥到最大。'},
+  {title:'胶原蛋白是骨骼的"钢筋框架"',text:'骨骼并非纯粹的矿物质，约30%是胶原蛋白，提供骨骼韧性和弹性。维生素C是胶原蛋白合成的必需营养素。每天摄入足量的新鲜水果和蔬菜，就能保证胶原蛋白的正常合成。'},
+  {title:'足弓发育影响整体姿态',text:'扁平足会导致踝关节内翻，进而影响膝关节和腰椎的受力，使整体姿态塌陷，外观身高减少。适当的赤脚行走（在草地、沙滩）能锻炼足部小肌群，帮助足弓正常发育。'},
+  {title:'抗阻训练对儿童安全吗？',text:'儿童做适度自重训练（俯卧撑、深蹲、引体向上）是安全的，有助于增强肌肉和骨密度。但应避免大重量负重（杠铃、哑铃）——过大的轴向压力可能损伤尚未闭合的骨骺板。'},
+  {title:'磷的摄入需要平衡',text:'磷是骨骼矿化的重要元素，但摄入过多（如大量喝碳酸饮料）会干扰钙的吸收，导致骨骼中钙流失。碳酸饮料中的磷酸含量极高，儿童青少年应尽量避免，用牛奶或白水替代。'},
+  {title:'肠道健康影响营养吸收',text:'肠道是所有营养素吸收的关键场所。肠道菌群失调会降低钙、铁、锌等矿物质的吸收效率，间接影响骨骼生长。日常多吃蔬菜、水果、全谷物和发酵食品，维持肠道微生物多样性。'},
+  {title:'脂肪不是骨骼的敌人',text:'适量的健康脂肪（橄榄油、坚果、牛油果）对骨骼发育至关重要。脂溶性维生素A、D、E、K都需要脂肪才能被人体吸收。过度低脂饮食反而会阻碍这些对骨骼至关重要的营养素吸收。'},
+  {title:'运动时机影响生长激素分泌',text:'运动后生长激素分泌会在1-2小时内达到峰值。如果在下午4-6点运动，生长激素高峰恰好与夜间睡眠分泌期"接力"，可能叠加促进效果。建议避免睡前1小时内剧烈运动，以免影响入睡。'},
+  {title:'牛奶过敏怎么补钙？',text:'对牛奶过敏或乳糖不耐受的孩子，可以选择：豆腐（特别是石膏豆腐）、芝麻酱（钙含量是牛奶的5倍）、杏仁、深绿蔬菜（芥蓝、羽衣甘蓝）、强化钙的植物奶（燕麦奶、豆奶）。'},
+  {title:'骨密度在青少年期达到峰值',text:'人一生骨密度的峰值出现在25-30岁，但90%的骨量在18岁前完成积累。这意味着青少年时期的营养和运动习惯，将决定一个人一生的骨骼健康基础。现在的每一步，都是在为未来"存款"。'},
+  {title:'冷热交替会刺激生长激素？',text:'冷水浴（10-15°C，持续2-3分钟）已被研究证明能在短期内显著提升生长激素水平。运动后的冷热交替淋浴也有类似效果，同时能促进血液循环，加速肌肉恢复。适合10岁以上的孩子尝试。'},
+  {title:'避免含糖饮料的理由',text:'一罐330ml可乐约含35g糖（相当于近9块方糖），大量的糖会导致血糖剧烈波动，刺激胰岛素大量分泌，而高胰岛素水平会抑制生长激素的作用。习惯性喝含糖饮料的孩子，长高潜力会受影响。'},
+  {title:'间歇性小睡的神奇效果',text:'学龄期儿童（6-12岁）下午进行20-30分钟的短暂午睡，能让大脑和身体得到恢复，同时迎来一次小的生长激素分泌高峰。有条件的情况下，午睡是一个很好的补充睡眠方式。'},
+  {title:'维生素A参与骨骼塑形',text:'维生素A不仅保护视力，还参与骨骼的塑形和重建过程。适量的维A（来自胡萝卜、南瓜、深绿蔬菜、动物肝脏）有助于维持骨骼正常的生长方向和结构。注意不要过量，动物肝脏每周吃1次即可。'},
+  {title:'跑步对骨骼密度的好处',text:'适度的跑步会给骨骼带来冲击力，这种冲击刺激会激活成骨细胞，促进新骨骼的生成，增加骨密度。每周3-5次、每次30分钟以上的慢跑或快跑，是增加骨密度最经济高效的方法之一。'},
+  {title:'偏食挑食对生长的影响',text:'严重偏食的孩子常常同时缺乏多种关键营养素：锌（影响生长激素合成）、铁（影响氧气输送）、钙（骨骼建材）、蛋白质（生长原料）。解决偏食问题比任何补充剂都重要，需要家长耐心引导。'},
+  {title:'脊柱侧弯会影响身高',text:'轻度脊柱侧弯（Cobb角<20°）本身对身高影响有限，但中重度侧弯可能使身高损失2-10cm。定期检查（站直后观察背部是否对称，一侧肩膀是否更高）有助于早期发现，游泳是改善轻度侧弯的好方法。'},
+  {title:'甲状腺激素与生长',text:'甲状腺激素是生长发育的重要调节者，参与骨骼生长板的成熟和生长激素的效应放大。碘是合成甲状腺激素的必需元素，日常使用加碘食盐、适量摄入海产品，能预防碘缺乏对生长的影响。'},
+  {title:'有氧运动后吃什么最好？',text:'运动后30分钟内是营养摄入的"黄金窗口"。理想的运动后食物：香蕉（快速补充糖原）+牛奶（蛋白质+钙）。这个搭配能最大化运动后肌肉修复和骨骼重建，同时让之后的生长激素分泌更高效。'},
+  {title:'性早熟对身高的影响',text:'性早熟（女孩8岁前、男孩9岁前出现第二性征）会导致骨骺过早闭合，最终成年身高低于遗传潜力。含激素的食物（某些保健品、催熟食品）、肥胖和过度接触性化学物质都是诱因，需警惕。'},
+  {title:'睡眠呼吸障碍影响生长',text:'打鼾或睡眠呼吸暂停会导致睡眠质量下降，影响深度睡眠阶段的生长激素分泌，是儿童生长迟缓的隐藏原因之一。如果孩子睡觉时鼾声明显、呼吸不规律，应及时就医检查腺样体和扁桃体。'},
+  {title:'饮食多样性是关键',text:'没有任何单一食物能提供所有生长所需营养素。每天摄入不同颜色的蔬菜水果（红、橙、黄、绿、紫）、多种蛋白质来源（动物+植物）和全谷物，通过食物多样性实现营养互补，才是最科学的饮食策略。'},
+  {title:'运动后肌肉酸痛是好事吗？',text:'适度的迟发性肌肉酸痛（运动后24-48小时出现）是肌肉微小撕裂后修复的正常现象，修复后肌肉更强壮。但骨骼和关节的疼痛（不是肌肉）则需要重视，可能是过度训练或损伤的信号，应及时就医。'},
+  {title:'午餐是营养最重要的一餐',text:'午餐应占全天总热量的35-40%。对于上学的孩子，午餐质量直接影响下午的学习效率和课后运动表现。理想午餐：一份拳头大小的主食、一份手掌大小的蛋白质、两种以上蔬菜、一杯牛奶或豆浆。'},
+  {title:'鞋底厚度与足部健康',text:'长期穿鞋底过厚（超过3cm）的运动鞋会减弱足部本体感觉和小肌群锻炼，不利于足弓发育。建议儿童日常穿薄底、包裹性好、稍有支撑的运动鞋，避免长时间穿高跟鞋或无支撑的拖鞋。'},
+  {title:'别让孩子背太重的书包',text:'书包重量超过体重的10-15%，会对正在发育的脊柱造成过大压力，长期可能导致脊柱弯曲和姿势问题。建议定期清理书包，只带当天需要的课本，使用有腰带的双肩包，并调整背带至合适高度。'},
+  {title:'积极心态真的影响生长',text:'研究发现，在充满爱和支持的家庭环境中成长的孩子，压力激素水平更低、生长激素分泌更正常。家长的鼓励、对孩子努力过程的肯定（而非只关注结果），是给孩子最好的"生长补品"。'},
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -885,7 +916,7 @@ function loadState(){
         const uid='u_'+Date.now();
         APP.users=[{id:uid,name:'宝贝',gender:'boy',birth:'2012-01',
           checks:d.checks||{},heights:d.heights||[],weights:d.weights||[],
-          predict:d.predict||null,customTasks:[]}];
+          predict:d.predict||null,customTasks:[],taskOverrides:{},deletedTaskIds:[]}];
         APP.activeId=uid;
         APP.notifOn=d.notifOn||false;
         APP.notifTime=d.notifTime||'20:00';
@@ -982,7 +1013,12 @@ function getAllTasks(user){
   if(!user)return[];
   const age=calcAgeYears(user.birth);
   const defaults=getDefaultTasks(age);
-  return[...defaults,...(user.customTasks||[])];
+  const overrides=user.taskOverrides||{};
+  const deletedIds=new Set(user.deletedTaskIds||[]);
+  const merged=defaults
+    .filter(t=>!deletedIds.has(t.id))
+    .map(t=>overrides[t.id]?{...t,...overrides[t.id]}:t);
+  return[...merged,...(user.customTasks||[])];
 }
 
 function getDone(user){
@@ -1043,17 +1079,23 @@ function updateHeader(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// TIPS CAROUSEL
+// DAILY TIP — 每天按日期固定显示一条，50条轮转
 // ═══════════════════════════════════════════════════════════
-let tipIdx=new Date().getDate()%TIPS.length;
 function renderTip(){
-  const t=TIPS[tipIdx];
+  const now=new Date();
+  // seed: year*1000 + dayOfYear，每天固定同一条，不同日期不同
+  const start=new Date(now.getFullYear(),0,0);
+  const dayOfYear=Math.floor((now-start)/(1000*60*60*24));
+  const idx=(now.getFullYear()*1000+dayOfYear)%TIPS.length;
+  const t=TIPS[idx];
   const el=$('daily-tip');if(!el)return;
-  el.innerHTML=`<strong>${t.title}</strong><br><br>${t.text}`;
-  const dots=$('tip-dots');if(!dots)return;
-  dots.innerHTML=TIPS.map((_,i)=>`<div class="tip-dot${i===tipIdx?' on':''}"></div>`).join('');
+  el.innerHTML=`<div style="font-size:11px;font-weight:700;color:var(--blue-m);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">今日贴士 · 第${idx+1}条 / ${TIPS.length}条</div><strong>${t.title}</strong><br><br>${t.text}`;
+  const ctr=$('tip-counter');
+  if(ctr){
+    const mo=now.getMonth()+1,d=now.getDate();
+    ctr.textContent=`${mo}月${d}日`;
+  }
 }
-function tipNav(dir){tipIdx=(tipIdx+dir+TIPS.length)%TIPS.length;renderTip();}
 
 // ═══════════════════════════════════════════════════════════
 // HOME
@@ -1199,9 +1241,6 @@ function renderChecklist(){
     学习:{bg:'#E8F1FB',c:'#1253A4'},习惯:{bg:'#E6F5ED',c:'#1B8A4A'},
   };
 
-  const defaultTasks=getDefaultTasks(calcAgeYears(u.birth));
-  const defaultIds=new Set(defaultTasks.map(t=>t.id));
-
   let html='',lastCat='';
   tasks.forEach(t=>{
     if(t.cat!==lastCat){
@@ -1210,7 +1249,6 @@ function renderChecklist(){
     }
     const isDone=!!tc[t.id];
     const cs=CAT_S[t.cat]||{bg:'#E8F1FB',c:'#1253A4'};
-    const isCustom=!defaultIds.has(t.id);
     html+=`<div class="ci${isDone?' done':''}" onclick="toggleCheck('${t.id}')">
       <div class="ci-circle">${isDone?'✓':''}</div>
       <div class="ci-body">
@@ -1218,7 +1256,8 @@ function renderChecklist(){
         ${t.desc?`<div class="ci-desc">${t.desc}</div>`:''}
       </div>
       <span class="ci-tag" style="background:${cs.bg};color:${cs.c}">${t.cat}</span>
-      ${isCustom?`<button class="ci-del" onclick="event.stopPropagation();deleteTask('${t.id}')" title="删除">✕</button>`:''}
+      <button class="ci-del" onclick="event.stopPropagation();editTask('${t.id}')" title="编辑" style="color:var(--t3);font-size:13px">✏️</button>
+      <button class="ci-del" onclick="event.stopPropagation();deleteTask('${t.id}')" title="删除">✕</button>
     </div>`;
   });
   $('check-container').innerHTML=html;
@@ -1241,14 +1280,34 @@ function toggleCheck(id){
 }
 
 // ═══════════════════════════════════════════════════════════
-// CUSTOM TASKS
+// TASK MANAGEMENT — add / edit / delete (default + custom)
 // ═══════════════════════════════════════════════════════════
+let editingTaskId=null; // null = adding new, else = editing
+
 function openAddTaskModal(){
   const u=getUser();if(!u){showToast('⚠️ 请先添加儿童档案');return;}
-  $('task-emoji').value='⭐';$('task-name').value='';$('task-desc').value='';$('task-cat').value='习惯';
-  setText('add-task-ttl','添加自定义打卡项目');
+  editingTaskId=null;
+  $('task-emoji').value='⭐';$('task-name').value='';
+  $('task-desc').value='';$('task-cat').value='习惯';
+  setText('add-task-ttl','添加打卡项目');
   openModal('modal-add-task');
 }
+
+function editTask(id){
+  const u=getUser();if(!u)return;
+  // find task in merged list
+  const tasks=getAllTasks(u);
+  const t=tasks.find(x=>x.id===id);
+  if(!t)return;
+  editingTaskId=id;
+  $('task-emoji').value=t.e||'⭐';
+  $('task-name').value=t.name||'';
+  $('task-desc').value=t.desc||'';
+  $('task-cat').value=t.cat||'习惯';
+  setText('add-task-ttl','编辑打卡项目');
+  openModal('modal-add-task');
+}
+
 function saveTask(){
   const u=getUser();if(!u)return;
   const name=$('task-name').value.trim();
@@ -1256,15 +1315,51 @@ function saveTask(){
   const em=$('task-emoji').value.trim()||'⭐';
   const desc=$('task-desc').value.trim();
   const cat=$('task-cat').value;
-  if(!u.customTasks)u.customTasks=[];
-  u.customTasks.push({id:'ct_'+Date.now(),cat,e:em,name,desc,custom:true});
-  save();closeModal('modal-add-task');renderChecklist();showToast('✅ 打卡项目已添加！');
+
+  if(editingTaskId){
+    // check if it's a default task or custom
+    const defaults=getDefaultTasks(calcAgeYears(u.birth));
+    const isDefault=defaults.some(t=>t.id===editingTaskId);
+    if(isDefault){
+      // store override
+      if(!u.taskOverrides)u.taskOverrides={};
+      u.taskOverrides[editingTaskId]={e:em,name,desc,cat};
+    }else{
+      // edit custom task
+      const ct=(u.customTasks||[]).find(t=>t.id===editingTaskId);
+      if(ct){ct.e=em;ct.name=name;ct.desc=desc;ct.cat=cat;}
+    }
+    showToast('✅ 项目已更新！');
+  }else{
+    if(!u.customTasks)u.customTasks=[];
+    u.customTasks.push({id:'ct_'+Date.now(),cat,e:em,name,desc});
+    showToast('✅ 打卡项目已添加！');
+  }
+  save();closeModal('modal-add-task');renderChecklist();
 }
+
 function deleteTask(id){
   const u=getUser();if(!u)return;
-  if(!confirm('确定删除这个打卡项目吗？'))return;
-  u.customTasks=(u.customTasks||[]).filter(t=>t.id!==id);
+  if(!confirm('确定删除这个打卡项目吗？（可在重置默认项目后恢复）'))return;
+  const defaults=getDefaultTasks(calcAgeYears(u.birth));
+  const isDefault=defaults.some(t=>t.id===id);
+  if(isDefault){
+    if(!u.deletedTaskIds)u.deletedTaskIds=[];
+    if(!u.deletedTaskIds.includes(id))u.deletedTaskIds.push(id);
+    // also remove any override
+    if(u.taskOverrides)delete u.taskOverrides[id];
+  }else{
+    u.customTasks=(u.customTasks||[]).filter(t=>t.id!==id);
+  }
   save();renderChecklist();showToast('🗑️ 项目已删除');
+}
+
+function resetDefaultTasks(){
+  const u=getUser();if(!u)return;
+  if(!confirm('确定恢复所有默认打卡项目？（已删除的默认项目将重新出现，自定义项目保留不变）'))return;
+  u.taskOverrides={};
+  u.deletedTaskIds=[];
+  save();renderChecklist();showToast('↺ 默认打卡项目已恢复！');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1661,7 +1756,7 @@ function saveUser(){
     if(u){u.name=name;u.birth=birth;u.gender=selGender;}
   }else{
     const uid='u_'+Date.now();
-    APP.users.push({id:uid,name,gender:selGender,birth,checks:{},heights:[],weights:[],predict:null,customTasks:[]});
+    APP.users.push({id:uid,name,gender:selGender,birth,checks:{},heights:[],weights:[],predict:null,customTasks:[],taskOverrides:{},deletedTaskIds:[]});
     if(!APP.activeId)APP.activeId=uid;
   }
   save();closeModal('modal-add-user');
@@ -1736,7 +1831,7 @@ function importData(){
     const raw=$('import-json').value.trim(),data=JSON.parse(raw);
     if(data.users&&Array.isArray(data.users)){
       // ensure customTasks exists on all users
-      data.users.forEach(u=>{if(!u.customTasks)u.customTasks=[];});
+      data.users.forEach(u=>{if(!u.customTasks)u.customTasks=[];if(!u.taskOverrides)u.taskOverrides={};if(!u.deletedTaskIds)u.deletedTaskIds=[];});
       APP=data;save();closeModal('modal-import');renderAll();showToast('📥 数据已成功导入！');
     }else showToast('⚠️ 数据格式不正确，请使用本工具导出的备份文件');
   }catch(e){showToast('⚠️ JSON 解析失败，请检查数据格式');}
